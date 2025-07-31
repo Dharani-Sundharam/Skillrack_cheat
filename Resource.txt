@@ -1,0 +1,192 @@
+Code question :
+<div class="ui-card-content">
+                <div class="ui  ribbon label violet">C - INTRO - PART001</div>
+
+                <div class="ui label circular">ProgramID- 6077</div>
+
+                <a class="ui image label ">
+                    <img class="ui avatar image circular" src="https://cdn.skillrack.com/profilepic/30858/1410070895900skillrack.jpg">
+                    SkillRack
+                </a>
+                <br><br>
+                <div class="ui label">Total Number of Students</div>
+                <br><br><p>In a class, there are<strong> M</strong> boys and <strong>N</strong> girls. The values of M and N are passes as input to the program. The program must print the total number of students in the class as the output.</p>
+
+<p><strong>Example Input/Output:</strong><br>
+Input:<br>
+30 45</p>
+
+<p>Output:<br>
+75</p>
+
+                <br><br>
+                <div class="ui label"> Max Execution Time Limit: 5000 millisecs</div></div>
+
+
+Code area :
+<div id="codediv" style="width:100%"><textarea id="txtCode" name="txtCode" style="display:none" class="ui-inputfield ui-inputtextarea ui-widget ui-state-default ui-corner-all ui-inputtextarea-resizable" cols="20" rows="3" maxlength="2147483647">j</textarea>
+
+
+                                            <div id="ctracktxtCode" class=" ace_editor ace-monokai ace_dark" style="font-size: 12pt; height: 90px;"><textarea class="ace_text-input" wrap="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="opacity: 0; font-size: 1px; height: 1px; width: 1px; top: 18px; left: 46px;"></textarea><div class="ace_gutter" aria-hidden="true" style="left: 0px; width: 42px;"><div class="ace_layer ace_gutter-layer ace_folding-enabled" style="height: 1e+06px; top: 0px; left: 0px; width: 42px;"><div class="ace_gutter-cell ace_gutter-active-line " style="height: 18px; top: 0px;">1<span style="display: none;"></span></div></div></div><div class="ace_scroller" style="line-height: 18px; left: 42px; right: 0px; bottom: 0px;"><div class="ace_content" style="top: 0px; left: 0px; width: 311px; height: 126px;"><div class="ace_layer ace_print-margin-layer"><div class="ace_print-margin" style="left: 708px; visibility: visible;"></div></div><div class="ace_layer ace_marker-layer"><div class="ace_active-line" style="height: 18px; top: 0px; left: 0px; right: 0px;"></div></div><div class="ace_layer ace_text-layer" style="height: 1e+06px; margin: 0px 4px; top: 0px; left: 0px;"><div class="ace_line_group" style="height: 18px; top: 0px;"><div class="ace_line" style="height: 18px;"></div></div></div><div class="ace_layer ace_marker-layer"></div><div class="ace_layer ace_cursor-layer ace_hidden-cursors"><div class="ace_cursor" style="display: block; top: 0px; left: 4px; width: 9px; height: 18px; animation-duration: 1000ms;"></div></div></div></div><div class="ace_scrollbar ace_scrollbar-v" style="display: none; width: 20px; bottom: 0px;"><div class="ace_scrollbar-inner" style="width: 20px; height: 18px;">&nbsp;</div></div><div class="ace_scrollbar ace_scrollbar-h" style="display: none; height: 20px; left: 42px; right: 0px;"><div class="ace_scrollbar-inner" style="height: 20px; width: 311px;">&nbsp;</div></div><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font: inherit; overflow: hidden;"><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font: inherit; overflow: visible;">הההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההההה</div><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font-style: inherit; font-variant: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; overflow: visible;">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</div></div></div>
+   
+
+    <script>
+        //<![CDATA[ 
+        txtCode = ace.edit("ctracktxtCode");
+        txtCode.setTheme("ace/theme/monokai");
+        txtCode.getSession().setMode("ace/mode/c_cpp");
+        txtCode.getSession().setUseWrapMode(true);
+        txtCode.setOptions({
+            enableBasicAutocompletion: false,
+            enableSnippets: false,
+            enableLiveAutocompletion: false,
+            fontSize: "12pt",
+            tabSize: 4,
+            highlightSelectedWord: true,
+            wrapBehavioursEnabled: false,
+            enableMultiselect:false,
+            readOnly: false,
+            minLines: 5,
+            maxLines: 500,
+            showGutter:true
+        });
+        txtCode.$blockScrolling = 'Infinity';
+        txtCode.getSession().setValue($("#txtCode").val());
+        cpd = 0;
+
+
+        //start for custom snippet and keywords
+        var snippetUrl = "/ace/sracksnippetc_cpp.js";
+        var keywordUrl = "/ace/srackkeywordc_cpp.js";
+        //var snippetManager = ace.require("ace/snippets").snippetManager;
+        var config = ace.require("ace/config");
+        var langTools = ace.require("ace/ext/language_tools");
+
+
+        //end for custom snippet and keywords
+
+//]]>
+
+    </script><div id="j_id_8z" class="ui-outputpanel ui-widget">
+        <script>
+            //<![CDATA[
+            function resetEditorCode() {                
+                txtCode.getSession().setValue($("#txtCode").val());
+            }
+
+            function cs() {
+                
+                var nowsnew = txtCode.getSession().getValue().replace(/\s/g, "");
+                var nowsold = $("#txtCode").val().replace(/\s/g, "");
+                var nlen = nowsnew.length;
+                var olen = nowsold.length;
+                var diff = nlen - olen;
+
+                if (diff > 30) {
+                    txtCode.getSession().setValue($("#txtCode").val());
+                    return;
+                } else {
+                    if ("" !== txtCode.getSession().getValue()) {
+                        $("#txtCode").val(txtCode.getSession().getValue());
+                    }
+
+                }
+                
+            }
+
+            function listsnapshotsjson() {
+            }
+
+            txtCode.on("change", function (e) {
+
+                if (true) {
+                    var nowsnew = txtCode.getSession().getValue().replace(/\s/g, "");
+                    var nowsold = $("#txtCode").val().replace(/\s/g, "");
+                    var nlen = nowsnew.length;
+                    var olen = nowsold.length;
+                    var diff = nlen - olen;
+
+                    if (diff > 30) {
+                        txtCode.getSession().setValue($("#txtCode").val());
+                        return;
+                    } else {
+                        if ("" !== txtCode.getSession().getValue()) {
+                            $("#txtCode").val(txtCode.getSession().getValue());
+                        }
+
+                    }
+                } else {
+                    $("#txtCode").val(txtCode.getSession().getValue());
+                }
+
+                if ('html' === 'c_cpp') {
+                    document.getElementById('htmldiv').innerHTML = txtCode.getSession().getValue();
+                }
+
+            });
+            //]]>
+        </script></div><div id="j_id_93" class="ui-outputpanel ui-widget">
+        <script type="text/javascript">
+
+        txtCode.commands.addCommand({ name: 'bte', bindKey: 'ctrl-c|ctrl-v|ctrl-x|ctrl-z|ctrl-shift-v|shift-del|cmd-c|cmd-v|cmd-x|alt-shift-down|alt-shift-up', exec: function() {} });
+
+            txtCode.commands.on("exec", function (e) {
+
+                if (e.command.name === "paste") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+            });
+            
+           
+
+            txtCode.container.addEventListener("drop", function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }, true);
+
+            $(document).ready(function () {
+                $(document).bind("cut copy paste", function (e) {
+                    e.preventDefault();
+                });
+            });
+
+
+        </script></div><span class="ui label black">111524104027@rmdec</span><br>
+                                        </div>
+
+View Solution button :
+<button type="button" id="showbtn" class="ui button green" onclick="showSolution()" style="">View Solution</button>
+
+Solution :
+<pre data-highlighted="yes" class="hljs language-cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span>
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span>
+</span>{
+    <span class="hljs-type">int</span> M, N;
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%d %d"</span>,&amp;M,&amp;N);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d"</span>, M+N);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+
+&nbsp;
+</pre>
+
+RUN :
+<span class="ui-button-text ui-c">Run</span>
+
+Error panel:
+<div id="errormsg_content" class="ui-panel-content ui-widget-content"><div id="j_id_b5" class="ui-outputpanel ui-widget">
+                                    <div style="word-wrap: break-word;">
+                                        <b>Hello.c:1:1:&nbsp;error:&nbsp;expected&nbsp;‘=’,&nbsp;‘,’,&nbsp;‘;’,&nbsp;‘asm’&nbsp;or&nbsp;‘__attribute__’&nbsp;at&nbsp;end&nbsp;of&nbsp;input<br>&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;|&nbsp;jd<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;^~<br></b>
+                                    </div></div>
+
+
+
+
+                                <script>
+                                    $('#btngrp').show();
+                                </script></div>
+

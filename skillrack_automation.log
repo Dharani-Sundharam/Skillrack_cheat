@@ -1,0 +1,111 @@
+2025-07-31 13:47:34,827 - INFO - Chrome driver initialized successfully
+2025-07-31 13:47:34,827 - INFO - Starting challenge solution process...
+2025-07-31 13:47:34,848 - INFO - No View Solution button - attempting to use Ollama
+2025-07-31 13:47:34,892 - ERROR - Could not generate solution with Ollama
+2025-07-31 13:47:38,346 - INFO - Browser closed
+2025-07-31 13:47:50,317 - INFO - Chrome driver initialized successfully
+2025-07-31 13:51:08,470 - INFO - Starting challenge solution process...
+2025-07-31 13:51:08,691 - INFO - View Solution button found - using provided solution
+2025-07-31 13:51:09,410 - INFO - View Solution button clicked
+2025-07-31 13:51:11,880 - INFO - Solution extracted from page successfully
+2025-07-31 13:51:11,902 - INFO - Solution copied to clipboard
+2025-07-31 13:51:11,902 - INFO - Attempt 1 to submit solution
+2025-07-31 13:52:42,407 - ERROR - Code editor element not found
+2025-07-31 13:52:42,407 - ERROR - Could not find code editor
+2025-07-31 13:52:42,407 - ERROR - Failed to submit solution on attempt 1
+2025-07-31 13:52:42,407 - INFO - Attempt 2 to submit solution
+2025-07-31 13:54:13,728 - ERROR - Code editor element not found
+2025-07-31 13:54:13,733 - ERROR - Could not find code editor
+2025-07-31 13:54:13,746 - ERROR - Failed to submit solution on attempt 2
+2025-07-31 13:54:13,746 - INFO - Attempt 3 to submit solution
+2025-07-31 13:55:02,889 - INFO - Script interrupted by user
+2025-07-31 13:55:02,889 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)': /session/df1f0a4cb0254e4ae0d81a59324d2af4
+2025-07-31 13:55:06,945 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000025392CD1A50>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/df1f0a4cb0254e4ae0d81a59324d2af4
+2025-07-31 13:55:11,032 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000025392CD1710>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/df1f0a4cb0254e4ae0d81a59324d2af4
+2025-07-31 13:55:19,875 - INFO - Browser closed
+2025-07-31 14:01:54,359 - INFO - Chrome driver initialized successfully
+2025-07-31 14:03:22,674 - INFO - Starting challenge solution process...
+2025-07-31 14:03:22,674 - ERROR - Error solving challenge: 'NoneType' object has no attribute 'is_displayed'
+2025-07-31 14:12:54,040 - INFO - Browser closed
+2025-07-31 14:13:40,764 - INFO - Chrome driver initialized successfully
+2025-07-31 14:15:19,131 - ERROR - Code editor element not found with any selector
+2025-07-31 14:15:39,760 - ERROR - Error submitting solution: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=138.0.7204.170)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6b299e415+77285]
+	GetHandleVerifier [0x0x7ff6b299e470+77376]
+	(No symbol) [0x0x7ff6b2769a6a]
+	(No symbol) [0x0x7ff6b2741f21]
+	(No symbol) [0x0x7ff6b27ef9be]
+	(No symbol) [0x0x7ff6b2810192]
+	(No symbol) [0x0x7ff6b27e83e3]
+	(No symbol) [0x0x7ff6b27b1521]
+	(No symbol) [0x0x7ff6b27b22b3]
+	GetHandleVerifier [0x0x7ff6b2c81efd+3107021]
+	GetHandleVerifier [0x0x7ff6b2c7c29d+3083373]
+	GetHandleVerifier [0x0x7ff6b2c9bedd+3213485]
+	GetHandleVerifier [0x0x7ff6b29b884e+184862]
+	GetHandleVerifier [0x0x7ff6b29c055f+216879]
+	GetHandleVerifier [0x0x7ff6b29a7084+113236]
+	GetHandleVerifier [0x0x7ff6b29a7239+113673]
+	GetHandleVerifier [0x0x7ff6b298e298+11368]
+	BaseThreadInitThunk [0x0x7ffb2a57e8d7+23]
+	RtlUserThreadStart [0x0x7ffb2b47c34c+44]
+
+2025-07-31 14:15:50,967 - INFO - Browser closed
+2025-07-31 14:17:53,988 - INFO - Chrome driver initialized successfully
+2025-07-31 14:19:42,168 - INFO - Starting challenge solution process...
+2025-07-31 14:19:42,176 - INFO - No View Solution button - attempting to use Ollama
+2025-07-31 14:19:42,178 - ERROR - Error solving challenge: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=138.0.7204.170)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6b299e415+77285]
+	GetHandleVerifier [0x0x7ff6b299e470+77376]
+	(No symbol) [0x0x7ff6b2769a6a]
+	(No symbol) [0x0x7ff6b2741f21]
+	(No symbol) [0x0x7ff6b27ef9be]
+	(No symbol) [0x0x7ff6b2810192]
+	(No symbol) [0x0x7ff6b27e83e3]
+	(No symbol) [0x0x7ff6b27b1521]
+	(No symbol) [0x0x7ff6b27b22b3]
+	GetHandleVerifier [0x0x7ff6b2c81efd+3107021]
+	GetHandleVerifier [0x0x7ff6b2c7c29d+3083373]
+	GetHandleVerifier [0x0x7ff6b2c9bedd+3213485]
+	GetHandleVerifier [0x0x7ff6b29b884e+184862]
+	GetHandleVerifier [0x0x7ff6b29c055f+216879]
+	GetHandleVerifier [0x0x7ff6b29a7084+113236]
+	GetHandleVerifier [0x0x7ff6b29a7239+113673]
+	GetHandleVerifier [0x0x7ff6b298e298+11368]
+	BaseThreadInitThunk [0x0x7ffb2a57e8d7+23]
+	RtlUserThreadStart [0x0x7ffb2b47c34c+44]
+
+2025-07-31 14:21:08,628 - INFO - Browser closed
+2025-07-31 14:29:14,535 - INFO - Chrome driver initialized successfully
+2025-07-31 14:30:52,957 - INFO - Starting challenge solution process...
+2025-07-31 14:30:52,963 - INFO - No View Solution button - attempting to use Ollama
+2025-07-31 14:30:52,964 - ERROR - Error solving challenge: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=138.0.7204.170)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6b299e415+77285]
+	GetHandleVerifier [0x0x7ff6b299e470+77376]
+	(No symbol) [0x0x7ff6b2769a6a]
+	(No symbol) [0x0x7ff6b2741f21]
+	(No symbol) [0x0x7ff6b27ef9be]
+	(No symbol) [0x0x7ff6b2810192]
+	(No symbol) [0x0x7ff6b27e83e3]
+	(No symbol) [0x0x7ff6b27b1521]
+	(No symbol) [0x0x7ff6b27b22b3]
+	GetHandleVerifier [0x0x7ff6b2c81efd+3107021]
+	GetHandleVerifier [0x0x7ff6b2c7c29d+3083373]
+	GetHandleVerifier [0x0x7ff6b2c9bedd+3213485]
+	GetHandleVerifier [0x0x7ff6b29b884e+184862]
+	GetHandleVerifier [0x0x7ff6b29c055f+216879]
+	GetHandleVerifier [0x0x7ff6b29a7084+113236]
+	GetHandleVerifier [0x0x7ff6b29a7239+113673]
+	GetHandleVerifier [0x0x7ff6b298e298+11368]
+	BaseThreadInitThunk [0x0x7ffb2a57e8d7+23]
+	RtlUserThreadStart [0x0x7ffb2b47c34c+44]
+

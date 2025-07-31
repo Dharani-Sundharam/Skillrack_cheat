@@ -1,0 +1,17 @@
+{
+    "chrome_profile_path": "",
+    "typing_speed": {
+        "min": 0.05,
+        "max": 0.15
+    },
+    "human_delays": {
+        "min": 1,
+        "max": 3
+    },
+    "retry_attempts": 3,
+    "ollama_enabled": false,
+    "ollama_url": "http://localhost:11434",
+    "ollama_model": "codellama",
+    "headless": false,
+    "timeout": 30
+} 
