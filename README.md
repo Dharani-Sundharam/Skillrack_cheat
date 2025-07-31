@@ -17,8 +17,8 @@
 ### 🐛 **Bug Reporting**
 This tool is in active development and may contain bugs. If you encounter any issues:
 
-1. **🔍 Check existing issues**: [GitHub Issues](https://github.com/yourusername/skillrack-automation/issues)
-2. **📝 Report new bugs**: [Create New Issue](https://github.com/yourusername/skillrack-automation/issues/new)
+1. **🔍 Check existing issues**: [GitHub Issues](https://github.com/Dharani-Sundharam/Skillrack_cheat/issues)
+2. **📝 Report new bugs**: [Create New Issue](https://github.com/Dharani-Sundharam/Skillrack_cheat/issues/new)
 3. **📋 Include details**: Error messages, screenshots, steps to reproduce
 4. **⚡ Get support**: Community help and developer responses
 
@@ -76,8 +76,8 @@ All dependencies are automatically installed via `requirements.txt`:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/skillrack-automation.git
-cd skillrack-automation
+git clone https://github.com/Dharani-Sundharam/Skillrack_cheat.git
+cd Skillrack_cheat
 
 # Install dependencies
 pip install -r requirements.txt
@@ -437,16 +437,16 @@ This tool is intended for:
 
 ### 📧 **Contact**
 
-- **GitHub**: [@yourusername](https://github.com/yourusername)
-- **Issues**: [Project Issues](https://github.com/yourusername/skillrack-automation/issues)
+- **GitHub**: [@Dharani-Sundharam](https://github.com/Dharani-Sundharam)
+- **Issues**: [Project Issues](https://github.com/Dharani-Sundharam/Skillrack_cheat/issues)
 - **Email**: support@yourproject.com (for security issues only)
 
 ## 📊 Project Statistics
 
-![GitHub stars](https://img.shields.io/github/stars/yourusername/skillrack-automation?style=social)
-![GitHub forks](https://img.shields.io/github/forks/yourusername/skillrack-automation?style=social)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/skillrack-automation)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/skillrack-automation)
+![GitHub stars](https://img.shields.io/github/stars/Dharani-Sundharam/Skillrack_cheat?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Dharani-Sundharam/Skillrack_cheat?style=social)
+![GitHub issues](https://img.shields.io/github/issues/Dharani-Sundharam/Skillrack_cheat)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Dharani-Sundharam/Skillrack_cheat)
 
 ## 📈 Changelog
 
