@@ -17,8 +17,8 @@
 ### 🐛 **Bug Reporting**
 This tool is in active development and may contain bugs. If you encounter any issues:
 
-1. **🔍 Check existing issues**: [GitHub Issues](https://github.com/yourusername/skillrack-automation/issues)
-2. **📝 Report new bugs**: [Create New Issue](https://github.com/yourusername/skillrack-automation/issues/new)
+1. **🔍 Check existing issues**: [GitHub Issues](https://github.com/Dharani-Sundharam/Skillrack_cheat/issues)
+2. **📝 Report new bugs**: [Create New Issue](https://github.com/Dharani-Sundharam/Skillrack_cheat/issues/new)
 3. **📋 Include details**: Error messages, screenshots, steps to reproduce
 4. **⚡ Get support**: Community help and developer responses
 
