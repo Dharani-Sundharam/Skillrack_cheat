@@ -439,7 +439,7 @@ This tool is intended for:
 
 - **GitHub**: [@Dharani-Sundharam](https://github.com/Dharani-Sundharam)
 - **Issues**: [Project Issues](https://github.com/Dharani-Sundharam/Skillrack_cheat/issues)
-- **Email**: support@yourproject.com (for security issues only)
+- **Email**: dharani3318s@gmail.com (for security issues only)
 
 ## 📊 Project Statistics
 
