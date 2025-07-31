@@ -190,3 +190,11 @@ Error panel:
                                     $('#btngrp').show();
                                 </script></div>
 
+
+Captcha :
+
+<img id="j_id_75" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAAyCAIAAACbCCTYAAACKElEQVR4Xu3c21IqMRAFUP7/pzlVjic2fRkGBIVyrafO7k7EqgTfPJ14B+fzOUfwu87/PSqv3SmP3bTcmdzv1uRgHsPUagdS95sefiA8xnQ1j+c12cS8fVRTmJIYTt2Ut/Opbo86lR9Rx3b23uGBR8EjTVfzeF6TVvvk6t6rSbuMYTtQtfkde9cHiEVdrvk0E1ttGPMYwnNNF+54vi7u/vWNrVXX+avJ1XN25qM2n875+M0+pW4MYz7V6ZBb662Ap5tu2635Jt7jlLfLOnw1icv2nJ35m8L9w2tRl209zR/M4YdMN+/WfKkD06VP9cGkfTNTXZdtspk2tofXoi7bepo/F2kAftR0827NlzRQ5+Pt36RuXNZkLdMhMf+avrZcat4euNU1aZdtPc3XD7CZcniu6eYdz9MDaN/DpA7UJIZt91TyaX7afupa9fdawlTemHbVOp4w1duy5nEAnmW7c8vdeWq1YWrFmVhPw1O+HJmPYW2tOpryKM1Mx6Y6avMVxjyGwG+qD7ImwF+0/mj70w0AAAAAAAAAAAAAAAAAAAAAAAAAPFT7Lw9jGPN99+0CXk56wGt538O+bxfw6o5/NbQDbQi8vfjVEF1OfQ7k6MAu4J3sP+a2VZMk7lrnJ5c7gFc1PdeV58f94XL2y04LeCfTY655Tao1c/FFElyOAy8jvc+1jHn7jGuSwnYX8Da2N1xf8pSvbo4+7O8CAAAAAAAAAAAAAPiufyJIUvQwlSBmAAAAAElFTkSuQmCC" alt="">
+
+Captcha entry :
+
+<input id="capval" name="capval" type="text" value="" class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all" maxlength="10" size="5">

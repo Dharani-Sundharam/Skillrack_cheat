@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 SkillRack Batch Solver
 Automates solving multiple coding challenges sequentially.

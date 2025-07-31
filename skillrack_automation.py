@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 SkillRack Automation Script
 Automates solving coding challenges on SkillRack platform by mimicking human behavior.
@@ -11,8 +11,6 @@ import json
 import requests
 import pyperclip
 import pyautogui
-import tkinter as tk
-from tkinter import messagebox
 import threading
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -89,6 +87,53 @@ class SkillRackAutomator:
         
         logger.info("Chrome driver initialized successfully")
         
+    def validate_session(self) -> bool:
+        """Validate that the browser session is still active."""
+        try:
+            if not self.driver:
+                logger.error("WebDriver is None")
+                return False
+                
+            # Try to get current window handle - this will fail if session is dead
+            current_handle = self.driver.current_window_handle
+            
+            # Try to get current URL - another validation
+            current_url = self.driver.current_url
+            
+            logger.debug(f"Session valid - Handle: {current_handle[:8]}..., URL: {current_url[:50]}...")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Session validation failed: {e}")
+            return False
+    
+    def ensure_session_active(self) -> bool:
+        """Ensure session is active, try to recover if not."""
+        if self.validate_session():
+            return True
+            
+        logger.warning("Session lost, attempting recovery...")
+        try:
+            # Try to reinitialize driver
+            if self.driver:
+                try:
+                    self.driver.quit()
+                except:
+                    pass
+            
+            self.setup_driver()
+            
+            # Ask user to navigate back to the page
+            print("\n⚠️  Browser session was lost!")
+            print("Please navigate back to the SkillRack challenge page in the new browser window.")
+            input("Press Enter when ready to continue...")
+            
+            return self.validate_session()
+            
+        except Exception as e:
+            logger.error(f"Session recovery failed: {e}")
+            return False
+        
     def human_delay(self, min_delay: float = None, max_delay: float = None):
         """Add random human-like delay."""
         if min_delay is None:
@@ -99,141 +144,86 @@ class SkillRackAutomator:
         delay = random.uniform(min_delay, max_delay)
         time.sleep(delay)
         
-    def show_cool_popup(self, title: str, message: str, countdown: int = 10):
-        """Show a cool popup notification with countdown."""
-        def create_popup():
-            # Create a custom popup window
-            popup = tk.Tk()
-            popup.title(title)
-            popup.geometry("500x300")
-            popup.configure(bg='#2c3e50')
-            popup.attributes('-topmost', True)
-            
-            # Center the window on screen
-            popup.update_idletasks()
-            x = (popup.winfo_screenwidth() // 2) - (500 // 2)
-            y = (popup.winfo_screenheight() // 2) - (300 // 2)
-            popup.geometry(f"500x300+{x}+{y}")
-            
-            # Title label
-            title_label = tk.Label(
-                popup, 
-                text="🚀 SkillRack Automation", 
-                font=("Arial", 18, "bold"),
-                fg='#ecf0f1', 
-                bg='#2c3e50'
-            )
-            title_label.pack(pady=20)
-            
-            # Message label
-            msg_label = tk.Label(
-                popup, 
-                text=message, 
-                font=("Arial", 12),
-                fg='#ecf0f1', 
-                bg='#2c3e50',
-                wraplength=450,
-                justify='center'
-            )
-            msg_label.pack(pady=20)
-            
-            # Countdown label
-            countdown_label = tk.Label(
-                popup, 
-                text=f"Auto-typing starts in: {countdown} seconds", 
-                font=("Arial", 14, "bold"),
-                fg='#e74c3c', 
-                bg='#2c3e50'
-            )
-            countdown_label.pack(pady=20)
-            
-            # Progress bar simulation
-            progress_frame = tk.Frame(popup, bg='#2c3e50')
-            progress_frame.pack(pady=10)
-            
-            progress_bg = tk.Frame(progress_frame, bg='#34495e', height=20, width=400)
-            progress_bg.pack()
-            
-            progress_fill = tk.Frame(progress_bg, bg='#3498db', height=20, width=0)
-            progress_fill.place(x=0, y=0)
-            
-            def update_countdown(remaining):
-                if remaining > 0:
-                    countdown_label.config(text=f"Auto-typing starts in: {remaining} seconds")
-                    progress_width = int(400 * (countdown - remaining) / countdown)
-                    progress_fill.config(width=progress_width)
-                    popup.after(1000, lambda: update_countdown(remaining - 1))
-                else:
-                    countdown_label.config(text="🎯 Starting auto-typing now!", fg='#27ae60')
-                    progress_fill.config(width=400, bg='#27ae60')
-                    popup.after(2000, popup.destroy)
-            
-            # Instructions
-            instructions = tk.Label(
-                popup,
-                text="📌 Click on the code editor area now!\n💡 Move mouse to top-left corner to stop automation",
-                font=("Arial", 10),
-                fg='#95a5a6',
-                bg='#2c3e50'
-            )
-            instructions.pack(side='bottom', pady=20)
-            
-            update_countdown(countdown)
-            popup.mainloop()
-        
-        # Run popup in separate thread to avoid blocking
-        popup_thread = threading.Thread(target=create_popup)
-        popup_thread.daemon = True
-        popup_thread.start()
-        
-        # Wait for popup to finish
-        time.sleep(countdown + 3)
+
         
     def pyautogui_type_solution(self, code: str):
-        """Type solution using PyAutoGUI with human-like behavior."""
+        """Type solution using PyAutoGUI with smart auto-completion handling."""
         try:
-            logger.info("Starting PyAutoGUI typing...")
+            logger.info("Starting smart PyAutoGUI typing...")
             
-            # Clear any existing text (Ctrl+A, Delete)
+            # Code is now ready for typing (auto-completion disabled)
+            logger.info("🚀 Code ready for smart typing with auto-completion disabled")
+            
+            # Super fast clearing (since we already cleared via JavaScript)
+            logger.info("Final PyAutoGUI clearing...")
+            
+            # Quick clear - just to be extra sure
             pyautogui.hotkey('ctrl', 'a')
-            time.sleep(0.5)
+            time.sleep(0.1)
             pyautogui.press('delete')
-            time.sleep(0.5)
+            time.sleep(0.1)
             
-            # Split code into lines for more realistic typing
-            lines = code.split('\n')
+            logger.info("✅ Editor cleared, starting SMART typing...")
             
-            for line_num, line in enumerate(lines, 1):
-                logger.info(f"Typing line {line_num}/{len(lines)}")
+            # Method 1: Fast typing (auto-completion disabled, so braces should work fine)
+            try:
+                lines = code.split('\n')
+                total_lines = len(lines)
                 
-                # Type the line with human-like delays
-                for i, char in enumerate(line):
-                    pyautogui.write(char)
-                    
-                    # Human-like typing speed
-                    delay = random.uniform(
-                        self.config["typing_speed"]["min"],
-                        self.config["typing_speed"]["max"]
-                    )
-                    time.sleep(delay)
-                    
-                    # Occasional longer pauses (thinking time)
-                    if random.random() < 0.03:
-                        time.sleep(random.uniform(0.3, 0.8))
+                logger.info(f"⚡ Attempting FAST typing for {total_lines} lines...")
                 
-                # Press Enter to go to next line (except for last line)
-                if line_num < len(lines):
-                    pyautogui.press('enter')
-                    time.sleep(random.uniform(0.2, 0.5))
+                for line_num, line in enumerate(lines, 1):
+                    if line_num % 5 == 0:  # Log every 5th line to reduce spam
+                        logger.info(f"⚡ Typing line {line_num}/{total_lines}")
                     
-                # Small pause between lines
-                time.sleep(random.uniform(0.1, 0.3))
+                    # Type line in chunks for speed
+                    chunks = [line[i:i+25] for i in range(0, len(line), 25)]
+                    for chunk in chunks:
+                        pyautogui.write(chunk)
+                        time.sleep(0.08)  # Minimal delay
+                    
+                    # Press Enter for next line (except last line)
+                    if line_num < total_lines:
+                        pyautogui.press('enter')
+                        time.sleep(0.04)
+                        
+                    time.sleep(0.02)  # Brief pause between lines
+                
+                logger.info("✅ Fast typing completed")
+                
+            except Exception as e:
+                logger.warning(f"Fast typing failed: {e}, trying fallback method...")
+                
+                # Fallback method: Character-by-character with brace handling (just in case)
+                for line_num, line in enumerate(code.split('\n'), 1):
+                    logger.info(f"🐌 Fallback typing line {line_num}")
+                    
+                    for char in line:
+                        if char == '{':
+                            # Handle opening brace with extra care
+                            pyautogui.write('{')
+                            time.sleep(0.1)
+                            # Check if auto-completion still occurred despite disabling
+                            pyautogui.hotkey('ctrl', 'end')  # Go to end
+                            pyautogui.press('backspace')  # Remove any auto-inserted '}'
+                            pyautogui.hotkey('ctrl', 'home')  # Go back to start
+                            # Navigate back to current position
+                            for _ in range(len(line[:line.index(char)]) + 1):
+                                pyautogui.press('right')
+                                time.sleep(0.01)
+                        else:
+                            pyautogui.write(char)
+                            time.sleep(0.02)
+                    
+                    if line_num < len(code.split('\n')):
+                        pyautogui.press('enter')
+                        time.sleep(0.05)
             
-            logger.info("PyAutoGUI typing completed successfully")
+            logger.info("Smart PyAutoGUI typing completed successfully")
             return True
             
         except Exception as e:
-            logger.error(f"Error in PyAutoGUI typing: {e}")
+            logger.error(f"Error in smart PyAutoGUI typing: {e}")
             return False
         
     def human_type(self, element, text: str):
@@ -325,12 +315,28 @@ class SkillRackAutomator:
                         # Remove HTML tags and get clean code
                         clean_code = soup.get_text()
                         
-                        # Clean up the code
+                        # Clean up the code thoroughly
                         clean_code = clean_code.replace('&nbsp;', ' ')
                         clean_code = clean_code.replace('&amp;', '&')
                         clean_code = clean_code.replace('&lt;', '<')
                         clean_code = clean_code.replace('&gt;', '>')
+                        
+                        # Remove extra whitespace and normalize line breaks
+                        lines = clean_code.split('\n')
+                        cleaned_lines = []
+                        for line in lines:
+                            line = line.strip()
+                            if line:  # Only add non-empty lines
+                                cleaned_lines.append(line)
+                        
+                        clean_code = '\n'.join(cleaned_lines)
+                        
+                        # Remove any trailing/leading braces that might be artifacts
                         clean_code = clean_code.strip()
+                        if clean_code.endswith('}\n}'):
+                            clean_code = clean_code[:-2]  # Remove extra closing brace
+                        if clean_code.endswith('}  }'):
+                            clean_code = clean_code[:-3] + '}'  # Fix double brace
                         
                         if clean_code and len(clean_code) > 10:  # Basic validation
                             logger.info(f"Solution extracted successfully: {len(clean_code)} characters")
@@ -349,13 +355,46 @@ class SkillRackAutomator:
             return None
             
     def is_view_solution_button_present(self) -> bool:
-        """Check if View Solution button is present and clickable."""
+        """Check if View Solution button is present and clickable with enhanced detection."""
         try:
-            button = self.driver.find_element(By.ID, "showbtn")
-            if button is None:
+            # Validate session first
+            if not self.validate_session():
+                logger.warning("Session not valid when checking for View Solution button")
                 return False
-            return button.is_displayed() and button.is_enabled()
-        except (NoSuchElementException, AttributeError, Exception):
+            
+            # Multiple selectors for View Solution button detection
+            button_selectors = [
+                "#showbtn",                                    # Primary ID from Resource.txt
+                "button[onclick='showSolution()']",            # By onclick function
+                "button.ui.button.green",                      # By classes
+                "//button[contains(text(), 'View Solution')]", # By text content
+                "//button[contains(text(), 'Solution')]",      # Partial text match
+                "button[id*='show']",                          # Partial ID match
+                ".solution-button"                             # Generic class
+            ]
+            
+            for selector in button_selectors:
+                try:
+                    if selector.startswith("//"):
+                        elements = self.driver.find_elements(By.XPATH, selector)
+                    else:
+                        elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
+                    
+                    for element in elements:
+                        if element and element.is_displayed() and element.is_enabled():
+                            logger.info(f"✅ View Solution button found using selector: {selector}")
+                            logger.debug(f"Button text: '{element.text}', ID: '{element.get_attribute('id')}'")
+                            return True
+                            
+                except Exception as e:
+                    logger.debug(f"Selector {selector} failed: {e}")
+                    continue
+            
+            logger.info("❌ No View Solution button found with any selector")
+            return False
+            
+        except Exception as e:
+            logger.error(f"Error in View Solution button detection: {e}")
             return False
             
     def click_view_solution(self) -> bool:
@@ -443,12 +482,13 @@ class SkillRackAutomator:
     def get_code_editor_element(self):
         """Find and return the ACE code editor element."""
         try:
-            # SkillRack uses ACE editor - try multiple approaches
+            # Based on Resource.txt structure - SkillRack ACE editor
             selectors = [
-                "#ctracktxtCode .ace_text-input",  # ACE editor text input
-                ".ace_text-input",                 # Generic ACE text input
-                "#txtCode",                        # Hidden textarea
+                "#ctracktxtCode .ace_text-input",  # Primary ACE editor text input (from Resource.txt)
+                ".ace_text-input",                 # Generic ACE text input  
+                "#txtCode",                        # Hidden textarea (backup from Resource.txt)
                 "textarea[name='txtCode']",        # Textarea by name
+                "#ctracktxtCode",                  # Main ACE container
                 ".ace_editor .ace_text-input"      # ACE editor within container
             ]
             
@@ -471,43 +511,141 @@ class SkillRackAutomator:
             logger.error(f"Error finding code editor: {e}")
             return None
             
+
+    
+    def confirm_ai_usage(self) -> bool:
+        """Ask user for confirmation before using AI to generate solution."""
+        try:
+            import tkinter as tk
+            from tkinter import messagebox
+            
+            # Create a temporary root window (hidden)
+            temp_root = tk.Tk()
+            temp_root.withdraw()  # Hide the window
+            temp_root.attributes('-topmost', True)  # Keep on top
+            
+            # Show confirmation dialog
+            result = messagebox.askyesno(
+                "🤖 AI Solution Generation",
+                "⚠️ No 'View Solution' button found for this challenge.\n\n"
+                "🎯 The automation can use AI (Ollama) to generate a solution.\n\n"
+                "📋 AI SOLUTION BENEFITS:\n"
+                "   ✅ Automatic solution generation\n"
+                "   ✅ Follows input/output format strictly\n"
+                "   ✅ Competitive programming optimized\n\n"
+                "⚠️ AI SOLUTION RISKS:\n"
+                "   ❌ May not be 100% accurate\n"
+                "   ❌ Might miss edge cases\n"
+                "   ❌ Requires manual verification\n\n"
+                "💡 RECOMMENDATION: Review the generated solution before submission\n\n"
+                "🤖 Use AI to generate solution?"
+            )
+            
+            # Clean up the temporary window
+            temp_root.destroy()
+            
+            if result:
+                logger.info("✅ User confirmed AI generation")
+            else:
+                logger.info("❌ User declined AI generation")
+                
+            return result
+                    
+        except Exception as e:
+            logger.error(f"Error in confirmation dialog: {e}")
+            # Fallback to command line if GUI fails
+            logger.info("Falling back to command line confirmation...")
+            print("\n🤖 Use AI to generate solution? (y/n): ", end="")
+            try:
+                choice = input().lower().strip()
+                return choice in ['y', 'yes']
+            except:
+                return False
+    
+    def clear_ace_editor_thoroughly(self):
+        """Clear ACE editor and disable auto-completion to prevent brace auto-pairing."""
+        try:
+            logger.info("Clearing ACE editor and disabling auto-completion...")
+            
+            # Method 1: Clear and configure ACE editor for clean typing
+            try:
+                self.driver.execute_script("""
+                    if (typeof txtCode !== 'undefined' && txtCode) {
+                        // Clear the editor content
+                        txtCode.getSession().setValue('');
+                        if (typeof $("#txtCode") !== 'undefined') {
+                            $("#txtCode").val('');
+                        }
+                        
+                        // Thoroughly disable auto-completion and auto-pairing
+                        txtCode.setOptions({
+                            enableBasicAutocompletion: false,
+                            enableSnippets: false,
+                            enableLiveAutocompletion: false,
+                            wrapBehavioursEnabled: false,
+                            enableMultiselect: false,
+                            behavioursEnabled: false,
+                            enableAutoIndent: false,
+                            showPrintMargin: false
+                        });
+                        
+                        // Disable session behaviors that cause auto-pairing
+                        var session = txtCode.getSession();
+                        if (session.getMode && session.getMode().$behaviour) {
+                            session.getMode().$behaviour = null;
+                        }
+                        
+                        // Remove auto-pairing behaviors
+                        if (txtCode.getBehavioursEnabled) {
+                            txtCode.setBehavioursEnabled(false);
+                        }
+                        
+                        console.log("✅ ACE auto-completion and auto-pairing disabled");
+                    }
+                """)
+                logger.info("✅ ACE editor cleared and auto-completion disabled")
+            except Exception as e:
+                logger.debug(f"JavaScript clear/config failed: {e}")
+            
+            # Method 2: Clear hidden textarea as backup
+            try:
+                textarea = self.driver.find_element(By.ID, "txtCode")
+                if textarea:
+                    self.driver.execute_script("arguments[0].value = '';", textarea)
+                    logger.info("✅ Hidden textarea cleared")
+            except Exception as e:
+                logger.debug(f"Textarea clear failed: {e}")
+                
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to clear ACE editor: {e}")
+            return False
+            
     def submit_solution(self, code: str) -> bool:
         """Submit the solution code using PyAutoGUI."""
         try:
             logger.info("Preparing to type solution using PyAutoGUI...")
             
-            # Show cool popup notification
-            self.show_cool_popup(
-                "🎯 Ready to Type Solution!",
-                "✅ Solution copied to clipboard successfully!\n\n" +
-                "📋 Now click on the SkillRack code editor area\n" +
-                "🎯 The automation will start typing the solution automatically\n\n" +
-                "⚠️ Make sure the code editor is focused and ready!",
-                countdown=10
-            )
+            # Clear the editor using JavaScript (more reliable)
+            logger.info("Clearing editor via JavaScript...")
+            self.clear_ace_editor_thoroughly()
+            
+            # Give user time to manually select code area
+            logger.info("⏰ Please click on the code editor area within 3 seconds...")
+            
+            # Simple 3-second countdown
+            for i in range(3, 0, -1):
+                logger.info(f"⏰ Starting in {i} seconds... Click the code editor now!")
+                time.sleep(1)
+            
+            logger.info("🚀 Starting to type solution...")
             
             # Type the solution using PyAutoGUI
             success = self.pyautogui_type_solution(code)
             
             if success:
-                logger.info("✅ Solution typed successfully!")
-                
-                # Show completion message
-                def show_completion():
-                    root = tk.Tk()
-                    root.withdraw()  # Hide main window
-                    messagebox.showinfo(
-                        "🎉 Automation Complete!", 
-                        "✅ Solution has been typed successfully!\n\n" +
-                        "👆 You can now manually click the RUN button\n" +
-                        "📊 Check the results and enjoy! 🚀"
-                    )
-                    root.destroy()
-                
-                completion_thread = threading.Thread(target=show_completion)
-                completion_thread.daemon = True
-                completion_thread.start()
-                
+                logger.info("✅ Solution typed successfully! You can now click RUN manually.")
                 return True
             else:
                 logger.error("❌ Failed to type solution")
@@ -639,21 +777,41 @@ class SkillRackAutomator:
             return None
             
     def solve_with_ollama(self, problem_description: str) -> Optional[str]:
-        """Use Ollama LLM to generate solution."""
+        """Use Ollama LLM to generate solution with strict format compliance."""
         if not self.config.get("ollama_enabled", False):
             return None
             
         try:
             prompt = f"""
-            Solve this programming problem and provide only the complete, runnable code:
-            
-            {problem_description}
-            
-            Requirements:
-            - Provide only the code, no explanations
-            - Make sure the code compiles and runs correctly
-            - Include all necessary headers and functions
-            """
+You are a competitive programming expert. Solve this SkillRack coding challenge EXACTLY as specified.
+
+PROBLEM:
+{problem_description}
+
+CRITICAL REQUIREMENTS:
+1. Read the Input/Output format CAREFULLY
+2. Follow the EXACT output format shown in examples
+3. Handle ALL edge cases mentioned
+4. Use ONLY the required input/output methods (scanf/printf for C)
+5. DO NOT add any extra text, explanations, or debug output
+6. Return ONLY compilable C/C++ code
+
+OUTPUT FORMAT:
+- Provide ONLY the complete C/C++ source code
+- Start with #include statements
+- Include main() function
+- Follow exact input/output format from examples
+- NO explanations, NO comments, NO extra output
+
+EXAMPLE STRUCTURE:
+#include <stdio.h>
+int main() {{
+    // Your solution here
+    return 0;
+}}
+
+Generate the solution now:
+"""
             
             response = requests.post(
                 f"{self.config['ollama_url']}/api/generate",
@@ -667,9 +825,17 @@ class SkillRackAutomator:
             
             if response.status_code == 200:
                 result = response.json()
-                solution = result.get('response', '').strip()
-                logger.info("Solution generated using Ollama")
-                return solution
+                raw_solution = result.get('response', '').strip()
+                
+                # Validate and clean the AI-generated solution
+                validated_solution = self.validate_ai_solution(raw_solution)
+                
+                if validated_solution:
+                    logger.info(f"✅ Valid solution generated using Ollama ({len(validated_solution)} characters)")
+                    return validated_solution
+                else:
+                    logger.error("❌ AI generated invalid solution - failed validation")
+                    return None
             else:
                 logger.error(f"Ollama request failed: {response.status_code}")
                 return None
@@ -678,23 +844,83 @@ class SkillRackAutomator:
             logger.error(f"Error using Ollama: {e}")
             return None
             
+    def validate_ai_solution(self, solution: str) -> Optional[str]:
+        """Validate and clean AI-generated solution to ensure proper format."""
+        try:
+            if not solution or len(solution.strip()) < 10:
+                logger.error("Solution too short or empty")
+                return None
+            
+            # Clean the solution
+            cleaned = solution.strip()
+            
+            # Remove any markdown code blocks if present
+            if cleaned.startswith('```'):
+                lines = cleaned.split('\n')
+                # Remove first line if it's ```c, ```cpp, etc.
+                if lines[0].startswith('```'):
+                    lines = lines[1:]
+                # Remove last line if it's ```
+                if lines and lines[-1].strip() == '```':
+                    lines = lines[:-1]
+                cleaned = '\n'.join(lines).strip()
+            
+            # Basic validation checks
+            validation_checks = {
+                'has_include': '#include' in cleaned,
+                'has_main': 'int main(' in cleaned or 'main()' in cleaned,
+                'has_return': 'return' in cleaned,
+                'has_braces': '{' in cleaned and '}' in cleaned,
+                'not_too_long': len(cleaned) < 5000,  # Reasonable size limit
+                'not_explanation': not cleaned.lower().startswith(('here', 'this', 'the solution', 'explanation'))
+            }
+            
+            failed_checks = [check for check, passed in validation_checks.items() if not passed]
+            
+            if failed_checks:
+                logger.warning(f"⚠️ AI solution failed validation checks: {failed_checks}")
+                logger.debug(f"Solution preview: {cleaned[:200]}...")
+                
+                # If only minor issues, try to auto-fix
+                if len(failed_checks) <= 2 and 'has_main' in validation_checks and validation_checks['has_main']:
+                    logger.info("🔧 Attempting to auto-fix minor issues...")
+                    return cleaned  # Return anyway for minor issues
+                else:
+                    return None
+            
+            logger.info("✅ AI solution passed all validation checks")
+            return cleaned
+            
+        except Exception as e:
+            logger.error(f"Error validating AI solution: {e}")
+            return None
+    
     def solve_current_challenge(self) -> bool:
         """Solve the current challenge on the page."""
         try:
             logger.info("Starting challenge solution process...")
             
-            # Check if View Solution button is present
+            # Ensure browser session is active before proceeding
+            if not self.ensure_session_active():
+                logger.error("Cannot proceed - browser session not available")
+                return False
+            
+            # 🎯 HIGH PRIORITY: Check for View Solution button first (most reliable)
+            logger.info("🔍 Checking for View Solution button (PRIORITY METHOD)...")
+            
             try:
                 has_solution_button = self.is_view_solution_button_present()
+                logger.info(f"View Solution button detection result: {has_solution_button}")
             except Exception as e:
                 logger.error(f"Error checking for View Solution button: {e}")
                 has_solution_button = False
                 
             if has_solution_button:
-                logger.info("View Solution button found - using provided solution")
+                logger.info("✅ View Solution button found - using PROVIDED SOLUTION (most reliable)")
                 
                 # Click View Solution button
                 if not self.click_view_solution():
+                    logger.error("Failed to click View Solution button")
                     return False
                     
                 # Extract solution
@@ -702,12 +928,40 @@ class SkillRackAutomator:
                 if not solution:
                     logger.error("Could not extract solution from page")
                     return False
+                
+                logger.info(f"✅ Successfully extracted provided solution ({len(solution)} characters)")
                     
             else:
-                logger.info("No View Solution button - attempting to use Ollama")
+                logger.warning("⚠️ No View Solution button found - considering AI generation")
                 
-                # Try to extract problem description
-                problem_text = self.driver.find_element(By.TAG_NAME, "body").text
+                # 🤖 Ask for confirmation before using AI
+                if not self.confirm_ai_usage():
+                    logger.info("User declined AI generation - stopping")
+                    return False
+                
+                logger.info("🤖 User confirmed - attempting to use Ollama AI for solution generation")
+                
+                # Double-check session is still active before proceeding
+                if not self.ensure_session_active():
+                    logger.error("Browser session lost before extracting problem text")
+                    return False
+                
+                # Try to extract problem description with error handling
+                try:
+                    problem_text = self.driver.find_element(By.TAG_NAME, "body").text
+                    logger.info(f"Extracted problem text: {len(problem_text)} characters")
+                except Exception as e:
+                    logger.error(f"Failed to extract problem text: {e}")
+                    # Try to recover session and retry once
+                    if self.ensure_session_active():
+                        try:
+                            problem_text = self.driver.find_element(By.TAG_NAME, "body").text
+                            logger.info(f"Retry successful - extracted problem text: {len(problem_text)} characters")
+                        except Exception as retry_e:
+                            logger.error(f"Retry also failed: {retry_e}")
+                            return False
+                    else:
+                        return False
                 
                 # Use Ollama to generate solution
                 solution = self.solve_with_ollama(problem_text)
@@ -740,25 +994,66 @@ class SkillRackAutomator:
             logger.info("Browser closed")
 
 def main():
-    """Main function to run the automation script."""
+    """Main function to run the automation script with continuous workflow."""
     automator = SkillRackAutomator()
     
     try:
         # Setup browser
         automator.setup_driver()
         
-        # Get current page URL or ask user to navigation to SkillRack
-        input("Please navigate to the SkillRack challenge page in the opened browser and press Enter to continue...")
+        print("🚀 SkillRack Automation - Continuous Mode")
+        print("=" * 50)
+        print("📌 Instructions:")
+        print("   1. Navigate to a SkillRack challenge page")
+        print("   2. Press Enter to solve the challenge")
+        print("   3. After solving, navigate to the next challenge")
+        print("   4. Press Enter again to solve the next one")
+        print("   5. Type 'quit' to exit")
+        print("=" * 50)
         
-        # Solve the challenge
-        success = automator.solve_current_challenge()
+        challenge_count = 0
         
-        if success:
-            print("✅ Challenge solved successfully!")
-        else:
-            print("❌ Failed to solve challenge")
-            
-        input("Press Enter to close the browser...")
+        while True:
+            try:
+                # Ask user to navigate to challenge page
+                if challenge_count == 0:
+                    user_input = input("\n🎯 Navigate to the first SkillRack challenge page and press Enter (or 'quit' to exit): ")
+                else:
+                    user_input = input(f"\n🎯 Navigate to the next challenge page and press Enter (or 'quit' to exit): ")
+                
+                # Check if user wants to quit
+                if user_input.lower().strip() in ['quit', 'exit', 'q']:
+                    print("👋 Exiting automation...")
+                    break
+                
+                # Validate session before solving
+                if not automator.ensure_session_active():
+                    print("❌ Browser session lost. Please restart the script.")
+                    break
+                
+                challenge_count += 1
+                print(f"\n🔄 Solving Challenge #{challenge_count}...")
+                
+                # Solve the challenge
+                success = automator.solve_current_challenge()
+                
+                if success:
+                    print(f"✅ Challenge #{challenge_count} solved successfully!")
+                    print("   💡 You can now manually click RUN to test the solution")
+                else:
+                    print(f"❌ Challenge #{challenge_count} failed to solve")
+                    
+                print(f"\n📊 Total challenges processed: {challenge_count}")
+                
+            except KeyboardInterrupt:
+                print("\n⚠️ Interrupted by user")
+                break
+            except Exception as e:
+                logger.error(f"Error in challenge {challenge_count}: {e}")
+                print(f"❌ Error occurred: {e}")
+                continue
+        
+        input("\nPress Enter to close the browser...")
         
     except KeyboardInterrupt:
         logger.info("Script interrupted by user")
