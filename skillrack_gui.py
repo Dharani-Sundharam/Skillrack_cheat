@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 SkillRack Automation GUI
 Beautiful, modern interface for SkillRack coding challenge automation.
@@ -281,7 +281,7 @@ class SkillRackGUI:
                                    command=self.inject_code,
                                    bg='#27ae60', fg='white', font=('Arial', 10, 'bold'),
                                    cursor='hand2', state=tk.DISABLED)
-        self.inject_btn.pack(side=tk.RIGHT)
+        self.inject_btn.pack(side=tk.RIGHT, padx=(10, 0))  # Add padding for better visibility
         
         # Middle section - Chat History
         chat_section = tk.Frame(main_container, bg='#ecf0f1')
@@ -393,18 +393,48 @@ class SkillRackGUI:
                                    font=('Arial', 12, 'bold'), bg='#ecf0f1')
         typing_frame.pack(fill=tk.X, padx=20, pady=10)
         
-        tk.Label(typing_frame, text="Typing Speed (min-max seconds):", bg='#ecf0f1').grid(row=0, column=0, sticky='w', padx=10, pady=5)
+        # Typing Mode Selection
+        tk.Label(typing_frame, text="Typing Mode:", bg='#ecf0f1').grid(row=0, column=0, sticky='w', padx=10, pady=5)
+        self.typing_mode_var = tk.StringVar(value="character")
+        mode_frame = tk.Frame(typing_frame, bg='#ecf0f1')
+        mode_frame.grid(row=0, column=1, padx=10, pady=5)
+        
+        tk.Radiobutton(mode_frame, text="Character-by-Character", variable=self.typing_mode_var, 
+                      value="character", bg='#ecf0f1', command=self.on_typing_mode_change).pack(side=tk.LEFT)
+        tk.Radiobutton(mode_frame, text="Chunk-based (Fast)", variable=self.typing_mode_var, 
+                      value="chunk", bg='#ecf0f1', command=self.on_typing_mode_change).pack(side=tk.LEFT, padx=(20, 0))
+        
+        # Character Delay Settings (for character mode)
+        tk.Label(typing_frame, text="Character Delay (min-max seconds):", bg='#ecf0f1').grid(row=1, column=0, sticky='w', padx=10, pady=5)
+        
+        char_delay_frame = tk.Frame(typing_frame, bg='#ecf0f1')
+        char_delay_frame.grid(row=1, column=1, padx=10, pady=5)
+        
+        self.char_delay_min_var = tk.DoubleVar(value=0.05)
+        self.char_delay_max_var = tk.DoubleVar(value=0.15)
+        
+        tk.Label(char_delay_frame, text="Min:", bg='#ecf0f1').pack(side=tk.LEFT)
+        self.char_min_entry = tk.Entry(char_delay_frame, textvariable=self.char_delay_min_var, width=8)
+        self.char_min_entry.pack(side=tk.LEFT, padx=5)
+        tk.Label(char_delay_frame, text="Max:", bg='#ecf0f1').pack(side=tk.LEFT, padx=(10, 0))
+        self.char_max_entry = tk.Entry(char_delay_frame, textvariable=self.char_delay_max_var, width=8)
+        self.char_max_entry.pack(side=tk.LEFT, padx=5)
+        
+        # Chunk Speed Settings (for chunk mode)
+        tk.Label(typing_frame, text="Chunk Speed (min-max seconds):", bg='#ecf0f1').grid(row=2, column=0, sticky='w', padx=10, pady=5)
         
         typing_speed_frame = tk.Frame(typing_frame, bg='#ecf0f1')
-        typing_speed_frame.grid(row=0, column=1, padx=10, pady=5)
+        typing_speed_frame.grid(row=2, column=1, padx=10, pady=5)
         
         self.typing_min_var = tk.DoubleVar(value=0.01)
         self.typing_max_var = tk.DoubleVar(value=0.04)
         
         tk.Label(typing_speed_frame, text="Min:", bg='#ecf0f1').pack(side=tk.LEFT)
-        tk.Entry(typing_speed_frame, textvariable=self.typing_min_var, width=8).pack(side=tk.LEFT, padx=5)
+        self.chunk_min_entry = tk.Entry(typing_speed_frame, textvariable=self.typing_min_var, width=8)
+        self.chunk_min_entry.pack(side=tk.LEFT, padx=5)
         tk.Label(typing_speed_frame, text="Max:", bg='#ecf0f1').pack(side=tk.LEFT, padx=(10, 0))
-        tk.Entry(typing_speed_frame, textvariable=self.typing_max_var, width=8).pack(side=tk.LEFT, padx=5)
+        self.chunk_max_entry = tk.Entry(typing_speed_frame, textvariable=self.typing_max_var, width=8)
+        self.chunk_max_entry.pack(side=tk.LEFT, padx=5)
         
         # Delay Settings
         delay_frame = tk.LabelFrame(parent, text="⏱️ Delay Settings", 
@@ -575,6 +605,16 @@ Made with ❤️ for the coding community
             self.timeout_var.set(config.get('timeout', 30))
             self.retry_var.set(config.get('retry_attempts', 3))
             
+            # Load new typing configuration
+            self.typing_mode_var.set(config.get('typing_mode', 'character'))
+            
+            character_delay = config.get('character_delay', {})
+            self.char_delay_min_var.set(character_delay.get('min', 0.05))
+            self.char_delay_max_var.set(character_delay.get('max', 0.15))
+            
+            # Update GUI state based on typing mode
+            self.on_typing_mode_change()
+            
             self.log_message("✅ Configuration loaded successfully")
             
         except FileNotFoundError:
@@ -588,9 +628,14 @@ Made with ❤️ for the coding community
             config = {
                 'chrome_profile_path': self.chrome_path_var.get(),
                 'headless': self.headless_var.get(),
+                'typing_mode': self.typing_mode_var.get(),
                 'typing_speed': {
                     'min': self.typing_min_var.get(),
                     'max': self.typing_max_var.get()
+                },
+                'character_delay': {
+                    'min': self.char_delay_min_var.get(),
+                    'max': self.char_delay_max_var.get()
                 },
                 'human_delays': {
                     'min': self.delay_min_var.get(),
@@ -613,13 +658,39 @@ Made with ❤️ for the coding community
             self.log_message(f"❌ Error saving config: {e}")
             messagebox.showerror("Error", f"Error saving configuration: {e}")
             
+    def on_typing_mode_change(self):
+        """Handle typing mode change to enable/disable appropriate fields."""
+        try:
+            mode = self.typing_mode_var.get()
+            
+            if mode == "character":
+                # Enable character delay fields, disable chunk fields
+                self.char_min_entry.config(state=tk.NORMAL)
+                self.char_max_entry.config(state=tk.NORMAL)
+                self.chunk_min_entry.config(state=tk.DISABLED)
+                self.chunk_max_entry.config(state=tk.DISABLED)
+                self.log_message("🔤 Character-by-character mode selected")
+            else:  # chunk mode
+                # Enable chunk fields, disable character delay fields
+                self.char_min_entry.config(state=tk.DISABLED)
+                self.char_max_entry.config(state=tk.DISABLED)
+                self.chunk_min_entry.config(state=tk.NORMAL)
+                self.chunk_max_entry.config(state=tk.NORMAL)
+                self.log_message("⚡ Chunk-based (fast) mode selected")
+                
+        except Exception as e:
+            self.log_message(f"❌ Error updating typing mode: {e}")
+            
     def reset_config(self):
         """Reset configuration to defaults."""
         if messagebox.askyesno("Confirm Reset", "Reset all settings to defaults?"):
             self.chrome_path_var.set('')
             self.headless_var.set(False)
+            self.typing_mode_var.set('character')
             self.typing_min_var.set(0.01)
             self.typing_max_var.set(0.04)
+            self.char_delay_min_var.set(0.05)
+            self.char_delay_max_var.set(0.15)
             self.delay_min_var.set(0.3)
             self.delay_max_var.set(0.8)
             self.ollama_enabled_var.set(True)
@@ -627,6 +698,9 @@ Made with ❤️ for the coding community
             self.ollama_model_var.set('codellama')
             self.timeout_var.set(30)
             self.retry_var.set(3)
+            
+            # Update GUI state
+            self.on_typing_mode_change()
             
             self.log_message("🔄 Configuration reset to defaults")
             
@@ -719,30 +793,83 @@ Made with ❤️ for the coding community
             # Update status
             self.root.after(0, lambda: self.log_message("🎯 Solving challenge..."))
             
-            # Solve the challenge
-            success = self.automator.solve_current_challenge()
+            # Solve the challenge - now returns a dict with detailed info
+            result = self.automator.solve_current_challenge()
             
             # Update UI on main thread
-            self.root.after(0, lambda: self.challenge_solved(success))
+            self.root.after(0, lambda: self.challenge_solved(result))
             
         except Exception as e:
             error_msg = str(e)
             self.root.after(0, lambda: self.challenge_solve_error(error_msg))
             
-    def challenge_solved(self, success):
+    def challenge_solved(self, result):
         """Called when challenge solving is complete."""
-        if success:
-            self.challenges_solved += 1
-            self.log_message(f"✅ Challenge #{self.challenges_solved} solved successfully!")
-            self.update_status(f"✅ Challenge completed - Total: {self.challenges_solved}")
-            self.update_challenges_count()
-            
-            # Simple completion notification - no popup
-            self.log_message("🎯 Ready for next challenge! Navigate to next page and click 'Solve Current Challenge'")
-            
+        if not isinstance(result, dict):
+            # Handle legacy boolean return for backward compatibility
+            if result:
+                self.challenges_solved += 1
+                self.log_message(f"✅ Challenge #{self.challenges_solved} solved successfully!")
+                self.update_status(f"✅ Challenge completed - Total: {self.challenges_solved}")
+                self.update_challenges_count()
+                self.log_message("🎯 Ready for next challenge! Navigate to next page and click 'Solve Current Challenge'")
+            else:
+                self.log_message("❌ Challenge solving failed - Check logs for details")
+                self.update_status("❌ Challenge failed - Check logs")
         else:
-            self.log_message("❌ Challenge solving failed - Check logs for details")
-            self.update_status("❌ Challenge failed - Check logs")
+            # Handle new dict format
+            success = result.get("success", False)
+            has_solution = result.get("has_solution", False)
+            message = result.get("message", "Unknown status")
+            question = result.get("question", "")
+            
+            # Always load question into AI chat if available
+            if question:
+                self.current_question = question
+                
+                # Update the question display box
+                try:
+                    self.question_display.delete(1.0, tk.END)
+                    self.question_display.insert(1.0, question)
+                    self.log_message(f"📋 Question display updated ({len(question)} characters)")
+                except Exception as e:
+                    self.log_message(f"❌ Error updating question display: {e}")
+                    print(f"Error updating question display: {e}")
+                
+                self.root.after(0, lambda: self.add_chat_message("system", f"📋 Question loaded: {question[:100]}..." if len(question) > 100 else f"📋 Question loaded: {question}"))
+                
+                # Enable AI buttons since we have a question
+                self.analyze_btn.config(state=tk.NORMAL)
+                self.generate_btn.config(state=tk.NORMAL)
+                self.inject_btn.config(state=tk.NORMAL)  # Enable inject button when question is loaded
+            
+            if success:
+                self.challenges_solved += 1
+                self.log_message(f"✅ Challenge #{self.challenges_solved} solved successfully!")
+                self.update_status(f"✅ Challenge completed - Total: {self.challenges_solved}")
+                self.update_challenges_count()
+                self.log_message("🎯 Ready for next challenge! Navigate to next page and click 'Solve Current Challenge'")
+                
+            elif not has_solution:
+                # No solution button found - redirect to AI tab
+                self.log_message("⚠️ No View Solution button found - Question loaded to AI Chat tab")
+                self.update_status("⚠️ No solution found - Check AI Chat tab")
+                
+                # Switch to AI Chat tab automatically
+                self.notebook.select(1)  # Index 1 is AI Chat tab
+                
+                # Add helpful message to AI chat
+                self.root.after(0, lambda: self.add_chat_message("system", 
+                    "⚠️ No 'View Solution' button found for this problem.\n" +
+                    "💡 Use the buttons above to:\n" +
+                    "   • 🧠 Analyze Question - Get problem breakdown\n" +
+                    "   • ⚡ Generate Solution - Create complete code\n" +
+                    "   • 💉 Inject Code - Type solution automatically"))
+                
+            else:
+                # Has solution but failed to extract/type it
+                self.log_message(f"❌ Challenge solving failed: {message}")
+                self.update_status(f"❌ Challenge failed: {message}")
         
         # Re-enable solve button
         self.solve_btn.config(state=tk.NORMAL, text="🎯 Step 2: Solve Current Challenge")
@@ -1064,27 +1191,8 @@ Headless Mode: {'Yes' if self.headless_var.get() else 'No'}
         try:
             self.add_chat_message("system", "📄 Scraping question from current page...")
             
-            # Extract question text using multiple selectors
-            question_selectors = [
-                ".ui-card-content",                    # Main content area
-                ".problem-statement",                  # Problem statement
-                "[class*='problem']",                  # Any element with 'problem' in class
-                ".question-content",                   # Question content
-                "body"                                 # Fallback to entire body
-            ]
-            
-            question_text = ""
-            for selector in question_selectors:
-                try:
-                    elements = self.automator.driver.find_elements(By.CSS_SELECTOR, selector)
-                    if elements:
-                        element = elements[0]
-                        text = element.text.strip()
-                        if text and len(text) > 100:  # Minimum length check
-                            question_text = text
-                            break
-                except Exception as e:
-                    continue
+            # Use the automator's improved question extraction method
+            question_text = self.automator.extract_current_question()
             
             if question_text:
                 # Clean and format the question
@@ -1381,6 +1489,15 @@ If they're asking for code modifications, provide clear explanations and updated
         try:
             self.root.after(0, lambda: self.add_chat_message("system", "💉 Starting code injection..."))
             
+            # Extract and clean only the code part from current_solution
+            clean_code = self.extract_clean_code_from_solution(self.current_solution)
+            
+            if not clean_code:
+                self.root.after(0, lambda: self.add_chat_message("system", "❌ No valid code found in the solution."))
+                return
+                
+            self.root.after(0, lambda: self.add_chat_message("system", f"✅ Cleaned code ready ({len(clean_code)} characters)"))
+            
             # Clear the editor first
             self.automator.clear_ace_editor_thoroughly()
             
@@ -1392,8 +1509,8 @@ If they're asking for code modifications, provide clear explanations and updated
                 self.root.after(0, lambda count=i: self.add_chat_message("system", f"⏰ Injecting in {count} seconds..."))
                 time.sleep(1)
             
-            # Type the solution
-            success = self.automator.pyautogui_type_solution(self.current_solution)
+            # Type the cleaned solution
+            success = self.automator.pyautogui_type_solution(clean_code)
             
             if success:
                 self.root.after(0, lambda: self.add_chat_message("system", "✅ Code injected successfully! You can now test it."))
@@ -1406,6 +1523,118 @@ If they're asking for code modifications, provide clear explanations and updated
         finally:
             # Re-enable inject button
             self.root.after(0, lambda: self.inject_btn.config(state=tk.NORMAL, text="💉 Inject Code"))
+            
+    def extract_clean_code_from_solution(self, solution_text):
+        """Extract only the clean code from AI response, specifically targeting ```code``` blocks."""
+        import re
+        
+        if not solution_text:
+            return ""
+        
+        self.add_chat_message("system", "🔍 Extracting code from AI response...")
+        
+        # PRIORITY 1: Look for ```code``` blocks specifically (as user requested)
+        code_block_patterns = [
+            r'```code\s*\n(.*?)\n```',                          # ```code``` blocks (highest priority)
+            r'```(?:c|cpp|c\+\+)\s*\n(.*?)\n```',              # Language-specific blocks
+            r'```(?:python|java|javascript)\s*\n(.*?)\n```',    # Other languages
+            r'```\s*\n(.*?)\n```',                              # Plain code blocks
+        ]
+        
+        for pattern in code_block_patterns:
+            matches = re.findall(pattern, solution_text, re.DOTALL)
+            if matches:
+                for match in matches:
+                    code = match.strip()
+                    if self.is_valid_code(code):
+                        self.add_chat_message("system", f"✅ Found code in ```block``` ({len(code)} characters)")
+                        return code
+        
+        # PRIORITY 2: Look for code between any triple backticks
+        all_code_blocks = re.findall(r'```.*?\n(.*?)\n```', solution_text, re.DOTALL)
+        for code_block in all_code_blocks:
+            code = code_block.strip()
+            if self.is_valid_code(code):
+                self.add_chat_message("system", f"✅ Found valid code block ({len(code)} characters)")
+                return code
+        
+        # PRIORITY 3: Extract code from formatted text
+        lines = solution_text.split('\n')
+        code_lines = []
+        in_code_section = False
+        
+        for line in lines:
+            original_line = line
+            line = line.strip()
+            
+            # Skip empty lines at the beginning
+            if not line and not in_code_section:
+                continue
+            
+            # Detect start of code (improved detection)
+            code_starters = ['#include', 'import ', 'def ', 'int main', 'class ', 'public class', 'function', 'using namespace', 'package ', 'struct ']
+            if any(keyword in line for keyword in code_starters):
+                in_code_section = True
+            
+            # If we're in code section, collect code lines
+            if in_code_section:
+                # Skip obvious explanation lines
+                skip_phrases = ['Note:', 'This', 'The solution', 'Here', 'Algorithm:', 'Explanation:', 'Output:', 'Input:', 'Example:', 'Time complexity:', 'Space complexity:']
+                if any(line.startswith(phrase) for phrase in skip_phrases):
+                    continue
+                
+                # Skip lines that are clearly explanations (improved detection)
+                word_count = len(line.split())
+                code_chars = sum(1 for char in line if char in '{}();,=<>+-*/[]')
+                
+                # If line has many words but few code characters, it's probably explanation
+                if word_count > 6 and code_chars < 2 and not (line.startswith('//') or line.startswith('/*') or line.startswith('#')):
+                    continue
+                
+                # Use original line to preserve indentation
+                code_lines.append(original_line.rstrip())
+        
+        if code_lines:
+            code = '\n'.join(code_lines).strip()
+            if self.is_valid_code(code):
+                self.add_chat_message("system", f"✅ Extracted code from text ({len(code)} characters)")
+                return code
+        
+        # PRIORITY 4: Return original if it looks like pure code
+        if self.is_valid_code(solution_text):
+            self.add_chat_message("system", f"✅ Using original text as code ({len(solution_text)} characters)")
+            return solution_text.strip()
+        
+        self.add_chat_message("system", "❌ No valid code found in AI response")
+        return ""
+        
+    def is_valid_code(self, text):
+        """Check if text looks like valid code."""
+        if not text or len(text) < 10:
+            return False
+            
+        # Check for basic code indicators
+        code_indicators = ['#include', 'int main', 'def ', 'class ', 'function', 'import ', '{', '}', ';']
+        has_indicators = any(indicator in text for indicator in code_indicators)
+        
+        # Check that it's not mostly explanation text
+        lines = text.split('\n')
+        code_lines = 0
+        total_lines = len([line for line in lines if line.strip()])
+        
+        for line in lines:
+            line = line.strip()
+            if line:
+                # Count as code line if it has typical code patterns
+                if any(char in line for char in ['{', '}', ';', '=']) or line.startswith(('#', '//', '/*')):
+                    code_lines += 1
+                elif line and not line[0].isupper():  # Not a sentence
+                    code_lines += 1
+        
+        # At least 60% should look like code lines
+        code_ratio = code_lines / max(total_lines, 1)
+        
+        return has_indicators and code_ratio >= 0.6
             
 
             

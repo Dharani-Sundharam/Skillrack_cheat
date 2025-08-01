@@ -151,79 +151,209 @@ class SkillRackAutomator:
         try:
             logger.info("Starting smart PyAutoGUI typing...")
             
-            # Code is now ready for typing (auto-completion disabled)
-            logger.info("🚀 Code ready for smart typing with auto-completion disabled")
+            # Get typing configuration
+            typing_mode = self.config.get("typing_mode", "chunk")  # Default to chunk mode
             
-            # Super fast clearing (since we already cleared via JavaScript)
-            logger.info("Final PyAutoGUI clearing...")
-            
-            # Quick clear - just to be extra sure
-            pyautogui.hotkey('ctrl', 'a')
-            time.sleep(0.1)
-            pyautogui.press('delete')
-            time.sleep(0.1)
-            
-            logger.info("✅ Editor cleared, starting SMART typing...")
-            
-            # Method 1: Fast typing (auto-completion disabled, so braces should work fine)
-            try:
-                lines = code.split('\n')
-                total_lines = len(lines)
+            if typing_mode == "character":
+                # Character-by-character typing
+                char_min = self.config.get("character_delay", {}).get("min", 0.05)
+                char_max = self.config.get("character_delay", {}).get("max", 0.15)
+                logger.info(f"Using CHARACTER mode: {char_min}s - {char_max}s delay per character")
+                return self._type_character_by_character(code, char_min, char_max)
+            else:
+                # Chunk-based typing (legacy mode)
+                typing_min = self.config["typing_speed"]["min"]
+                typing_max = self.config["typing_speed"]["max"]
+                logger.info(f"Using CHUNK mode: {typing_min}s - {typing_max}s delay per chunk")
+                return self._type_chunk_based(code, typing_min, typing_max)
                 
-                logger.info(f"⚡ Attempting FAST typing for {total_lines} lines...")
+        except Exception as e:
+            logger.error(f"Error in smart PyAutoGUI typing: {e}")
+            return False
+            
+    def _type_character_by_character(self, code: str, char_min: float, char_max: float):
+        """Type code character by character with configurable delays - ROBUST VERSION."""
+        try:
+            # Format and clean code first
+            clean_code = self._format_code_for_typing(code)
+            
+            # Multiple attempts to clear editor
+            for attempt in range(3):
+                pyautogui.hotkey('ctrl', 'a')
+                time.sleep(0.3)
+                pyautogui.press('delete')
+                time.sleep(0.3)
                 
-                for line_num, line in enumerate(lines, 1):
-                    if line_num % 5 == 0:  # Log every 5th line to reduce spam
-                        logger.info(f"⚡ Typing line {line_num}/{total_lines}")
+                # Verify editor is cleared by trying to select all again
+                pyautogui.hotkey('ctrl', 'a')
+                time.sleep(0.1)
+                # If nothing is selected, editor should be clear
+                
+            logger.info("✅ Editor thoroughly cleared")
+            
+            lines = clean_code.split('\n')
+            total_chars = len(clean_code)
+            chars_typed = 0
+            
+            logger.info(f"🔤 Starting ROBUST character-by-character typing ({total_chars} characters, {len(lines)} lines)")
+            
+            for line_num, line in enumerate(lines, 1):
+                if line_num % 5 == 0:  # More frequent progress updates
+                    progress = (chars_typed / total_chars) * 100
+                    logger.info(f"🔤 Progress: {progress:.1f}% (Line {line_num}/{len(lines)})")
+                
+                # Type each character in the line with verification
+                for char_pos, char in enumerate(line):
+                    # Type the character
+                    pyautogui.write(char)
+                    chars_typed += 1
                     
-                    # Type line in chunks for speed
-                    chunks = [line[i:i+25] for i in range(0, len(line), 25)]
-                    for chunk in chunks:
-                        pyautogui.write(chunk)
-                        time.sleep(0.08)  # Minimal delay
+                    # Apply character delay with some randomness
+                    char_delay = random.uniform(char_min, char_max)
+                    time.sleep(char_delay)
                     
-                    # Press Enter for next line (except last line)
-                    if line_num < total_lines:
-                        pyautogui.press('enter')
-                        time.sleep(0.04)
-                        
-                    time.sleep(0.02)  # Brief pause between lines
+                    # Every 20 characters, add a small pause for stability
+                    if char_pos > 0 and char_pos % 20 == 0:
+                        time.sleep(char_min)
                 
-                logger.info("✅ Fast typing completed")
+                # Press Enter for next line (except last line)
+                if line_num < len(lines):
+                    pyautogui.press('enter')
+                    # Longer delay after Enter to ensure line break is processed
+                    time.sleep(max(char_min * 3, 0.1))
+                    chars_typed += 1  # Count the newline
                 
-            except Exception as e:
-                logger.warning(f"Fast typing failed: {e}, trying fallback method...")
-                
-                # Fallback method: Character-by-character with brace handling (just in case)
-                for line_num, line in enumerate(code.split('\n'), 1):
-                    logger.info(f"🐌 Fallback typing line {line_num}")
-                    
-                    for char in line:
-                        if char == '{':
-                            # Handle opening brace with extra care
-                            pyautogui.write('{')
-                            time.sleep(0.1)
-                            # Check if auto-completion still occurred despite disabling
-                            pyautogui.hotkey('ctrl', 'end')  # Go to end
-                            pyautogui.press('backspace')  # Remove any auto-inserted '}'
-                            pyautogui.hotkey('ctrl', 'home')  # Go back to start
-                            # Navigate back to current position
-                            for _ in range(len(line[:line.index(char)]) + 1):
-                                pyautogui.press('right')
-                                time.sleep(0.01)
-                        else:
-                            pyautogui.write(char)
-                            time.sleep(0.02)
-                    
-                    if line_num < len(code.split('\n')):
-                        pyautogui.press('enter')
-                        time.sleep(0.05)
+                # Small pause between lines for stability
+                time.sleep(char_min)
             
-            logger.info("Smart PyAutoGUI typing completed successfully")
+            logger.info("✅ ROBUST character-by-character typing completed successfully")
+            
+            # Final verification - log what we think we typed
+            logger.info(f"📊 Typing summary: {len(lines)} lines, {total_chars} characters")
+            
             return True
             
         except Exception as e:
-            logger.error(f"Error in smart PyAutoGUI typing: {e}")
+            logger.error(f"Error in ROBUST character-by-character typing: {e}")
+            return False
+            
+    def _format_code_for_typing(self, code: str) -> str:
+        """Format and clean code before typing to ensure consistency."""
+        try:
+            # Remove any extraneous text that might be included
+            lines = code.split('\n')
+            cleaned_lines = []
+            
+            code_started = False
+            
+            for line in lines:
+                line = line.strip()
+                
+                # Skip empty lines at the beginning
+                if not line and not code_started:
+                    continue
+                    
+                # Detect start of actual code
+                if any(keyword in line for keyword in ['#include', 'import ', 'def ', 'int main', 'class ', 'public class', 'function']):
+                    code_started = True
+                
+                # Skip description lines and explanations
+                if code_started:
+                    # Skip lines that look like explanations
+                    if line.startswith(('Note:', 'This', 'The ', 'Here', 'Algorithm:', 'Explanation:', 'Output:', 'Input:')):
+                        continue
+                    
+                    # Skip lines with too much English text
+                    if len(line) > 10 and line.count(' ') > line.count(';') + line.count('{') + line.count('}') + 5:
+                        # Probably an explanation line
+                        continue
+                        
+                    cleaned_lines.append(line)
+                elif any(keyword in line for keyword in ['#include', 'import ', 'def ', 'int main', 'class ', 'public class', 'function']):
+                    # This is definitely code
+                    code_started = True
+                    cleaned_lines.append(line)
+            
+            # Join lines and ensure proper formatting
+            clean_code = '\n'.join(cleaned_lines)
+            
+            # Remove extra blank lines
+            while '\n\n\n' in clean_code:
+                clean_code = clean_code.replace('\n\n\n', '\n\n')
+            
+            # Ensure code ends with a single newline
+            clean_code = clean_code.strip() + '\n'
+            
+            logger.info(f"✅ Code formatted: {len(code)} -> {len(clean_code)} characters")
+            return clean_code
+            
+        except Exception as e:
+            logger.error(f"Error formatting code: {e}")
+            # Return original code if formatting fails
+            return code
+            
+    def _type_chunk_based(self, code: str, typing_min: float, typing_max: float):
+        """Type code in chunks (legacy mode) - ROBUST VERSION."""
+        try:
+            # Format and clean code first
+            clean_code = self._format_code_for_typing(code)
+            
+            # Multiple attempts to clear editor (same as character mode)
+            for attempt in range(3):
+                pyautogui.hotkey('ctrl', 'a')
+                time.sleep(0.3)
+                pyautogui.press('delete')
+                time.sleep(0.3)
+                
+                # Verify editor is cleared
+                pyautogui.hotkey('ctrl', 'a')
+                time.sleep(0.1)
+            
+            logger.info("✅ Editor thoroughly cleared")
+            
+            lines = clean_code.split('\n')
+            total_lines = len(lines)
+            
+            logger.info(f"⚡ Starting ROBUST chunk typing for {total_lines} lines...")
+            
+            for line_num, line in enumerate(lines, 1):
+                if line_num % 3 == 0:  # More frequent progress updates
+                    logger.info(f"⚡ Typing line {line_num}/{total_lines}: {line[:30]}..." if len(line) > 30 else f"⚡ Typing line {line_num}/{total_lines}: {line}")
+                
+                # Type line in smaller, more reliable chunks
+                chunk_size = 15  # Smaller chunks for better reliability
+                chunks = [line[i:i+chunk_size] for i in range(0, len(line), chunk_size)]
+                
+                for chunk_idx, chunk in enumerate(chunks):
+                    # Type the chunk
+                    pyautogui.write(chunk)
+                    
+                    # Use configured typing speed with minimum safety delay
+                    typing_delay = max(random.uniform(typing_min, typing_max), 0.1)
+                    time.sleep(typing_delay)
+                    
+                    # Extra stability pause every few chunks
+                    if chunk_idx > 0 and chunk_idx % 3 == 0:
+                        time.sleep(0.1)
+                
+                # Press Enter for next line (except last line)
+                if line_num < total_lines:
+                    pyautogui.press('enter')
+                    # Ensure Enter is processed
+                    time.sleep(max(typing_min * 2, 0.15))
+                    
+                # Brief pause between lines for stability
+                time.sleep(max(typing_min, 0.05))
+            
+            logger.info("✅ ROBUST chunk typing completed successfully")
+            
+            # Final verification log
+            logger.info(f"📊 Chunk typing summary: {total_lines} lines processed")
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error in ROBUST chunk typing: {e}")
             return False
         
     def human_type(self, element, text: str):
@@ -895,15 +1025,48 @@ Generate the solution now:
             logger.error(f"Error validating AI solution: {e}")
             return None
     
-    def solve_current_challenge(self) -> bool:
-        """Solve the current challenge on the page."""
+    def extract_current_question(self) -> str:
+        """Extract the current question/problem text from the page."""
+        try:
+            if not self.ensure_session_active():
+                logger.error("Cannot extract question - browser session not available")
+                return ""
+                
+            # Try to extract problem description
+            try:
+                problem_text = self.driver.find_element(By.TAG_NAME, "body").text
+                logger.info(f"✅ Extracted problem text: {len(problem_text)} characters")
+                return problem_text
+            except Exception as e:
+                logger.error(f"Failed to extract problem text: {e}")
+                # Try to recover session and retry once
+                if self.ensure_session_active():
+                    try:
+                        problem_text = self.driver.find_element(By.TAG_NAME, "body").text
+                        logger.info(f"Retry successful - extracted problem text: {len(problem_text)} characters")
+                        return problem_text
+                    except Exception as retry_e:
+                        logger.error(f"Retry also failed: {retry_e}")
+                        return ""
+                else:
+                    return ""
+                    
+        except Exception as e:
+            logger.error(f"Error extracting question: {e}")
+            return ""
+    
+    def solve_current_challenge(self) -> dict:
+        """Solve the current challenge on the page. Returns info about solution status."""
         try:
             logger.info("Starting challenge solution process...")
             
             # Ensure browser session is active before proceeding
             if not self.ensure_session_active():
                 logger.error("Cannot proceed - browser session not available")
-                return False
+                return {"success": False, "has_solution": False, "message": "Browser session not available"}
+            
+            # Always extract the question first
+            question_text = self.extract_current_question()
             
             # 🎯 HIGH PRIORITY: Check for View Solution button first (most reliable)
             logger.info("🔍 Checking for View Solution button (PRIORITY METHOD)...")
@@ -921,71 +1084,41 @@ Generate the solution now:
                 # Click View Solution button
                 if not self.click_view_solution():
                     logger.error("Failed to click View Solution button")
-                    return False
+                    return {"success": False, "has_solution": True, "message": "Failed to click View Solution button", "question": question_text}
                     
                 # Extract solution
                 solution = self.extract_solution_from_page()
                 if not solution:
                     logger.error("Could not extract solution from page")
-                    return False
+                    return {"success": False, "has_solution": True, "message": "Could not extract solution from page", "question": question_text}
                 
                 logger.info(f"✅ Successfully extracted provided solution ({len(solution)} characters)")
+                
+                # Format and clean solution before typing
+                clean_solution = self._format_code_for_typing(solution)
+                
+                # Copy to clipboard 
+                pyperclip.copy(clean_solution)
+                logger.info("✅ Solution copied to clipboard successfully!")
+                
+                # Submit solution using PyAutoGUI (user will click Run manually)
+                success = self.submit_solution(clean_solution)
+                
+                if success:
+                    logger.info("🎉 Solution typing completed! User can now click RUN button manually.")
+                    return {"success": True, "has_solution": True, "message": "Solution typed successfully", "question": question_text}
+                else:
+                    logger.error("❌ Failed to type solution")
+                    return {"success": False, "has_solution": True, "message": "Failed to type solution", "question": question_text}
                     
             else:
-                logger.warning("⚠️ No View Solution button found - considering AI generation")
-                
-                # 🤖 Ask for confirmation before using AI
-                if not self.confirm_ai_usage():
-                    logger.info("User declined AI generation - stopping")
-                    return False
-                
-                logger.info("🤖 User confirmed - attempting to use Ollama AI for solution generation")
-                
-                # Double-check session is still active before proceeding
-                if not self.ensure_session_active():
-                    logger.error("Browser session lost before extracting problem text")
-                    return False
-                
-                # Try to extract problem description with error handling
-                try:
-                    problem_text = self.driver.find_element(By.TAG_NAME, "body").text
-                    logger.info(f"Extracted problem text: {len(problem_text)} characters")
-                except Exception as e:
-                    logger.error(f"Failed to extract problem text: {e}")
-                    # Try to recover session and retry once
-                    if self.ensure_session_active():
-                        try:
-                            problem_text = self.driver.find_element(By.TAG_NAME, "body").text
-                            logger.info(f"Retry successful - extracted problem text: {len(problem_text)} characters")
-                        except Exception as retry_e:
-                            logger.error(f"Retry also failed: {retry_e}")
-                            return False
-                    else:
-                        return False
-                
-                # Use Ollama to generate solution
-                solution = self.solve_with_ollama(problem_text)
-                if not solution:
-                    logger.error("Could not generate solution with Ollama")
-                    return False
-                    
-            # Copy to clipboard 
-            pyperclip.copy(solution)
-            logger.info("✅ Solution copied to clipboard successfully!")
-            
-            # Submit solution using PyAutoGUI (user will click Run manually)
-            success = self.submit_solution(solution)
-            
-            if success:
-                logger.info("🎉 Solution typing completed! User can now click RUN button manually.")
-                return True
-            else:
-                logger.error("❌ Failed to type solution")
-                return False
+                logger.warning("⚠️ No View Solution button found - question will be loaded to AI tab")
+                return {"success": False, "has_solution": False, "message": "No solution button found - redirecting to AI tab", "question": question_text}
             
         except Exception as e:
             logger.error(f"Error solving challenge: {e}")
-            return False
+            question_text = self.extract_current_question() if hasattr(self, 'driver') and self.driver else ""
+            return {"success": False, "has_solution": False, "message": f"Error: {e}", "question": question_text}
             
     def close(self):
         """Close the browser driver."""
