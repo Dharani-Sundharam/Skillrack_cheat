@@ -63,12 +63,13 @@ This tool is intended for educational purposes and learning automation concepts.
 
 ### 🛠 **Dependencies**
 All dependencies are automatically installed via `requirements.txt`:
-- `selenium` - Web automation and browser control
-- `beautifulsoup4` - HTML parsing and content extraction
-- `pyautogui` - Keyboard and mouse automation
-- `requests` - HTTP requests for AI integration
-- `pyperclip` - Clipboard operations
-- `lxml` - XML/HTML processing
+- `selenium==4.15.2` - Web automation and browser control
+- `beautifulsoup4==4.12.2` - HTML parsing and content extraction
+- `pyautogui==0.9.54` - Keyboard and mouse automation
+- `requests==2.31.0` - HTTP requests for AI integration
+- `pyperclip==1.8.2` - Clipboard operations
+- `lxml==4.9.3` - XML/HTML processing
+- `pyinstaller==6.3.0` - Creating standalone executables
 
 ## 🚀 Quick Start
 
@@ -177,23 +178,26 @@ The tool intelligently handles SkillRack's ACE editor auto-completion:
 
 ```json
 {
-  "driver_wait_time": 10,
+  "chrome_profile_path": "",
+  "headless": false,
+  "typing_mode": "chunk",
   "typing_speed": {
-    "min": 0.01,
-    "max": 0.04
+    "min": 1.0,
+    "max": 2.0
+  },
+  "character_delay": {
+    "min": 0.05,
+    "max": 0.2
   },
   "human_delays": {
-    "min": 0.3,
-    "max": 0.8
+    "min": 1.0,
+    "max": 3.0
   },
   "ollama_enabled": true,
   "ollama_url": "http://localhost:11434",
-  "ollama_model": "codellama:7b",
-  "headless": false,
-  "window_size": [1920, 1080],
-  "auto_close_browser": true,
-  "max_retry_attempts": 3,
-  "session_timeout": 300
+  "ollama_model": "codellama",
+  "timeout": 5,
+  "retry_attempts": 3
 }
 ```
 
@@ -201,11 +205,14 @@ The tool intelligently handles SkillRack's ACE editor auto-completion:
 
 | Setting | Description | Recommended Value |
 |---------|-------------|-------------------|
-| `typing_speed.min/max` | Typing delay range (seconds) | 0.01 - 0.04 |
-| `human_delays.min/max` | Pause between actions | 0.3 - 0.8 |
-| `ollama_model` | AI model to use | `codellama:7b` |
+| `typing_mode` | Method of typing text | `chunk` or `character` |
+| `typing_speed.min/max` | Typing delay range (seconds) | 1.0 - 2.0 |
+| `character_delay.min/max` | Delay between characters | 0.05 - 0.2 |
+| `human_delays.min/max` | Pause between actions | 1.0 - 3.0 |
+| `ollama_model` | AI model to use | `codellama` |
 | `headless` | Run browser in background | `false` |
-| `session_timeout` | Browser timeout (seconds) | 300 |
+| `timeout` | Operation timeout (seconds) | 5 |
+| `retry_attempts` | Max retry attempts | 3 |
 
 ## 🤖 AI Integration
 
@@ -320,18 +327,20 @@ tail -f skillrack_automation.log
 
 ### 📊 **Performance Optimization**
 
-```bash
-# For faster operation
+```json
+// For faster operation
 {
-  "typing_speed": {"min": 0.005, "max": 0.02},
-  "human_delays": {"min": 0.1, "max": 0.3},
+  "typing_speed": {"min": 0.5, "max": 1.0},
+  "character_delay": {"min": 0.01, "max": 0.05},
+  "human_delays": {"min": 0.5, "max": 1.0},
   "headless": true
 }
 
-# For stealth operation  
+// For stealth operation  
 {
-  "typing_speed": {"min": 0.05, "max": 0.15},
-  "human_delays": {"min": 1.0, "max": 3.0},
+  "typing_speed": {"min": 2.0, "max": 4.0},
+  "character_delay": {"min": 0.1, "max": 0.3},
+  "human_delays": {"min": 2.0, "max": 5.0},
   "headless": false
 }
 ```
@@ -405,19 +414,24 @@ This tool is intended for:
 - **Educational purposes** - Learning automation and AI concepts
 - **Personal practice** - Improving programming skills
 - **Research** - Understanding web automation techniques
+- **Learning assistance** - Understanding problem-solving approaches
+
+**Important**: This tool primarily extracts solutions from problems that already have "View Solution" available. It does not create unfair advantages but rather automates the process of learning from existing solutions.
 
 ### 📋 **Responsible Usage**
 
 - **Respect SkillRack's Terms of Service**
-- **Don't use for unfair advantages in competitions**
+- **Use for learning and practice, not for unfair competition advantages**
 - **Rate limit your usage** to avoid server overload
 - **Report security issues** responsibly
+- **Understand solutions** rather than just copying them
 
 ### 🔒 **Privacy & Security**
 
 - **No data collection** - All processing is local
-- **Secure credentials** - Use environment variables for sensitive data
+- **Secure credentials** - No credential storage or transmission
 - **Open source** - Full transparency in code
+- **Local AI processing** - Ollama runs entirely on your machine
 
 ## 📞 Support & Community
 
@@ -450,14 +464,15 @@ This tool is intended for:
 
 ## 📈 Changelog
 
-### 🚀 **v2.0.0** (Latest)
-- ✨ Added comprehensive AI Chat interface
-- 🤖 Implemented smart auto-completion handling
-- 🎨 Complete GUI redesign with modern dark theme
-- 🧠 Enhanced AI integration with multiple models
-- 🔧 Improved error handling and session management
-- 📋 Real-time logging and status updates
-- ⚡ Performance optimizations and bug fixes
+### 🚀 **v2.1.0** (Latest)
+- ✨ Enhanced AI Chat interface with improved conversation flow
+- 🤖 Advanced auto-completion handling and code injection
+- 🎨 Refined GUI with better user experience and dark theme
+- 🧠 Robust AI integration with Ollama and multiple models
+- 🔧 Enhanced error handling and session management
+- 📋 Real-time logging with detailed status updates
+- ⚡ Performance optimizations and stability improvements
+- 🔄 Improved typing modes (chunk vs character-based)
 
 ### 📜 **Previous Versions**
 - **v1.2.0** - Added basic AI integration
